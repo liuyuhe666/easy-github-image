@@ -19,7 +19,8 @@ pnpm dev
 1. [获取 GitHub 个人令牌](https://docs.github.com/zh/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens)
 2. 设置访问令牌和存储仓库
 
-![配置](https://raw.githubusercontent.com/liuyuhe666/easy-github-image-repo/main/images/2025/1741415612460.png)
+![](https://raw.githubusercontent.com/liuyuhe666/easy-github-image-repo/main/images/2025/1741425508549.png)
+![](https://raw.githubusercontent.com/liuyuhe666/easy-github-image-repo/main/images/2025/1741425546538.png)
 
 ## Reference
 - [https://vuejs.org](https://vuejs.org)
