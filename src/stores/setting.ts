@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useSettingStore = defineStore('easy-github-image-setting-store', {
+export const useSettingStore = defineStore('setting-store', {
   state: () => ({ token: '', repo: '' }),
   getters: {
     getUserName: (state) => {

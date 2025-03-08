@@ -1,23 +1,28 @@
 <script setup lang="ts">
 import { Setting } from '@element-plus/icons-vue'
+import { useWindowScroll } from '@vueuse/core'
 import { onMounted, ref } from 'vue'
 import { siteInfo } from '../constants/site.ts'
+import { useImageStore } from '../stores/image.ts'
 import { useSettingStore } from '../stores/setting.ts'
 
 const dialogFormVisible = ref(false)
 const token = ref<string>('')
 const repo = ref<string>('')
-const store = useSettingStore()
+const settingStore = useSettingStore()
+const imageStore = useImageStore()
+const { y } = useWindowScroll()
 
 onMounted(() => {
-  token.value = store.token
-  repo.value = store.repo
+  token.value = settingStore.token
+  repo.value = settingStore.repo
 })
 
-function save() {
-  store.setToken(token.value)
-  store.setRepo(repo.value)
+async function save() {
+  settingStore.setToken(token.value)
+  settingStore.setRepo(repo.value)
   dialogFormVisible.value = false
+  await imageStore.update(repo.value, token.value)
   ElMessage({
     message: '保存成功',
     type: 'success',
@@ -27,7 +32,7 @@ function save() {
 </script>
 
 <template>
-  <header class="flex items-center justify-between w-full py-4">
+  <header class="fixed top-0 z-30 flex items-center justify-between md:w-7xl max-w-7xl py-4" :class="[y > 50 ? 'border-b border-gray-200 bg-white/50 backdrop-blur-xl' : 'bg-white/0']">
     <span class="px-4 text-2xl font-semibold">Easy GitHub Image</span>
     <div class="px-4 flex items-center justify-between gap-4">
       <el-button type="primary" :icon="Setting" @click="dialogFormVisible = true">

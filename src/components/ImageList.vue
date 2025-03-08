@@ -1,24 +1,27 @@
 <script setup lang="ts">
-import type { ImageItem } from '../lib/github.ts'
 import { useClipboard } from '@vueuse/core'
-import { onMounted, ref } from 'vue'
-import { getImageList } from '../lib/github.ts'
+import { computed, onMounted } from 'vue'
+import { useImageStore } from '../stores/image.ts'
 import { useSettingStore } from '../stores/setting.ts'
 
-const imageList = ref<ImageItem[]>()
-const srcList = ref<string[]>()
-const store = useSettingStore()
+const imageStore = useImageStore()
+const imageList = computed(() => imageStore.getImages)
+const srcList = computed(() => imageStore.getSrcList)
+const settingStore = useSettingStore()
 const { copy } = useClipboard()
 
 onMounted(async () => {
-  const data = await getImageList(store.repo, store.token)
-  if (data && data.length) {
-    const urlList: string[] = []
-    data.forEach((item: ImageItem) => {
-      urlList.push(item.rawURL)
+  const repo = settingStore.repo
+  const token = settingStore.token
+  if (!repo || !token) {
+    ElMessage({
+      message: '请先完成 GitHub 配置',
+      type: 'error',
+      plain: true,
     })
-    imageList.value = data
-    srcList.value = urlList
+  }
+  else {
+    await imageStore.update(repo, token)
   }
 })
 
@@ -53,10 +56,11 @@ function handleURLCopy(url: string) {
 </script>
 
 <template>
-  <div v-if="imageList && imageList.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
+  <div v-if="imageList && imageList.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
     <div v-for="(image, index) in imageList" :key="image.sha" class="flex flex-col items-center justify-between shadow-md rounded-lg">
-      <div class="text-center w-sm">
+      <div class="flex flex-col items-center justify-between">
         <el-image
+          class="w-80 h-64"
           :src="image.rawURL"
           :hide-on-click-modal="true"
           :preview-src-list="srcList"
@@ -65,7 +69,10 @@ function handleURLCopy(url: string) {
           :alt="image.sha"
         >
           <template #placeholder>
-            <img src="/loading.png" alt="loading" class="animate-spin">
+            <div class="flex flex-col items-center justify-between gap-2">
+              <img src="/loading.png" alt="loading" class="animate-spin">
+              <span>加载中...</span>
+            </div>
           </template>
         </el-image>
       </div>

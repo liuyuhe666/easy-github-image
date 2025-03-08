@@ -1,7 +1,10 @@
 import { convertToBase64 } from '../utils'
+import { Cache } from './cache.ts'
 
 const githubRawURL = 'https://raw.githubusercontent.com'
 const githubAPIURL = 'https://api.github.com'
+const cacheSize = 50
+const cache = new Cache(cacheSize)
 
 export function getImageURL(repo: string, filename: string): string {
   return `${githubRawURL}/${repo}/main/${filename}`
@@ -87,6 +90,10 @@ export async function uploadImage(file: File, path: string, repo: string, token:
 }
 
 export async function getCommitDetail(sha: string, repo: string, token: string) {
+  const cacheData = cache.get(sha)
+  if (cacheData) {
+    return JSON.parse(cacheData)
+  }
   const response = await fetch(
     `${githubAPIURL}/repos/${repo}/commits/${sha}`,
     {
@@ -99,7 +106,9 @@ export async function getCommitDetail(sha: string, repo: string, token: string) 
   if (!response.ok) {
     throw new Error('获取提交详情失败')
   }
-  return await response.json()
+  const data = await response.json()
+  cache.put(sha, JSON.stringify(data))
+  return data
 }
 
 export interface ImageItem {

@@ -2,12 +2,14 @@
 import type { UploadRequestOptions } from 'element-plus'
 import { UploadFilled } from '@element-plus/icons-vue'
 import { uploadImage } from '../lib/github.ts'
+import { useImageStore } from '../stores/image.ts'
 import { useSettingStore } from '../stores/setting.ts'
 import { getFileExtension } from '../utils'
 
-const store = useSettingStore()
-const token = store.token
-const repo = store.repo
+const settingStore = useSettingStore()
+const token = settingStore.token
+const repo = settingStore.repo
+const imageStore = useImageStore()
 
 async function uploadFile(uploadRequestOptions: UploadRequestOptions) {
   const date = new Date()
@@ -18,12 +20,12 @@ async function uploadFile(uploadRequestOptions: UploadRequestOptions) {
   const path = `images/${year}/${timestamp}.${suffix}`
   try {
     await uploadImage(file, path, repo, token)
+    await imageStore.update(repo, token)
     ElMessage({
       message: '上传成功',
       type: 'success',
       plain: true,
     })
-    window.location.reload()
   }
   catch (error) {
     console.error(error)
@@ -38,7 +40,7 @@ async function uploadFile(uploadRequestOptions: UploadRequestOptions) {
 
 <template>
   <el-upload
-    class="md:w-xl"
+    class="md:w-xl pt-24"
     drag
     :show-file-list="false"
     :http-request="uploadFile"
