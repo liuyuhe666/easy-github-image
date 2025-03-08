@@ -9,6 +9,7 @@ const imageList = ref<ImageItem[]>()
 const srcList = ref<string[]>()
 const store = useSettingStore()
 const { copy } = useClipboard()
+
 onMounted(async () => {
   const data = await getImageList(store.repo, store.token)
   if (data && data.length) {
@@ -52,7 +53,7 @@ function handleURLCopy(url: string) {
 </script>
 
 <template>
-  <div class="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
+  <div v-if="imageList && imageList.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-4 py-2">
     <div v-for="(image, index) in imageList" :key="image.sha" class="flex flex-col items-center justify-between shadow-md rounded-lg">
       <div class="text-center w-sm">
         <el-image
@@ -62,7 +63,11 @@ function handleURLCopy(url: string) {
           :initial-index="index"
           fit="scale-down"
           :alt="image.sha"
-        />
+        >
+          <template #placeholder>
+            <img src="/loading.png" alt="loading" class="animate-spin">
+          </template>
+        </el-image>
       </div>
       <div class="flex items-center gap-2 py-2">
         <el-tag type="primary" class="cursor-pointer" @click="handleMarkdownCopy(image.rawURL)">
@@ -77,6 +82,7 @@ function handleURLCopy(url: string) {
       </div>
     </div>
   </div>
+  <el-empty v-else description="空空如也~" />
 </template>
 
 <style scoped>
