@@ -33,7 +33,7 @@ async function save() {
 
 <template>
   <header class="fixed top-0 z-30 flex items-center justify-between md:w-7xl max-w-7xl py-4" :class="[y > 50 ? 'border-b border-gray-200 bg-white/50 backdrop-blur-xl' : 'bg-white/0']">
-    <span class="px-4 text-2xl font-semibold">Easy GitHub Image</span>
+    <span class="px-4 text-2xl font-semibold hover:drop-shadow-[0_0_2em_#b0d9f7]">Easy GitHub Image</span>
     <div class="px-4 flex items-center justify-between gap-4">
       <el-button type="primary" :icon="Setting" @click="dialogFormVisible = true">
         配置
