@@ -65,7 +65,7 @@ function handleURLCopy(url: string) {
           :hide-on-click-modal="true"
           :preview-src-list="srcList"
           :initial-index="index"
-          fit="scale-down"
+          fit="cover"
           :alt="image.sha"
         >
           <template #placeholder>
