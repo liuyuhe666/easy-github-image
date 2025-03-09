@@ -108,6 +108,7 @@ export async function getCommitDetail(sha: string, repo: string, token: string) 
   }
   const data = await response.json()
   cache.put(sha, JSON.stringify(data))
+  cache.saveCache()
   return data
 }
 

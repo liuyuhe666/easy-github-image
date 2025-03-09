@@ -4,6 +4,7 @@ export class Cache {
   constructor(capacity: number) {
     this.capacity = capacity
     this.cache = new Map<string, string>()
+    this.loadCache()
   }
 
   get(key: string): string | null {
@@ -24,5 +25,30 @@ export class Cache {
       this.cache.delete(firstKey)
     }
     this.cache.set(key, value)
+  }
+
+  saveCache() {
+    const cacheData = Array.from(this.cache.entries())
+    try {
+      localStorage.setItem('easy-github-image-cache', JSON.stringify(cacheData))
+    }
+    catch (e) {
+      console.error(e)
+    }
+  }
+
+  loadCache() {
+    try {
+      const cacheData = localStorage.getItem('easy-github-image-cache')
+      if (cacheData) {
+        const entries = JSON.parse(cacheData) as [string, string][]
+        entries.forEach(([key, value]) => {
+          this.cache.set(key, value)
+        })
+      }
+    }
+    catch (e) {
+      console.error(e)
+    }
   }
 }
