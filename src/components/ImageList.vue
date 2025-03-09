@@ -57,7 +57,7 @@ function handleURLCopy(url: string) {
 
 <template>
   <div v-if="imageList && imageList.length > 0" class="grid grid-cols-1 md:grid-cols-3 gap-4 py-4">
-    <div v-for="(image, index) in imageList" :key="image.sha" class="flex flex-col items-center justify-between shadow-md rounded-lg">
+    <div v-for="(image, index) in imageList" :key="image.sha" class="flex flex-col items-center justify-between shadow-md rounded-lg dark:bg-white">
       <div class="flex flex-col items-center justify-between">
         <el-image
           class="w-80 h-64"
