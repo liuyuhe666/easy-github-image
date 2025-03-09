@@ -11,11 +11,10 @@ const token = settingStore.token
 const repo = settingStore.repo
 const imageStore = useImageStore()
 
-async function uploadFile(uploadRequestOptions: UploadRequestOptions) {
+async function upload(file: File) {
   const date = new Date()
   const timestamp = date.getTime()
   const year = date.getFullYear()
-  const file = uploadRequestOptions.file
   const suffix = getFileExtension(file.name)
   const path = `images/${year}/${timestamp}.${suffix}`
   try {
@@ -36,6 +35,27 @@ async function uploadFile(uploadRequestOptions: UploadRequestOptions) {
     })
   }
 }
+
+async function uploadFile(uploadRequestOptions: UploadRequestOptions) {
+  const file = uploadRequestOptions.file
+  await upload(file)
+}
+
+async function handlePaste(event: ClipboardEvent) {
+  const clipboardData = event.clipboardData
+  if (clipboardData) {
+    const items = clipboardData.items
+    for (let i = 0; i < items.length; i++) {
+      const item = items[i]
+      if (item.kind === 'file' && item.type.startsWith('image')) {
+        const file = item.getAsFile()
+        if (file) {
+          await upload(file)
+        }
+      }
+    }
+  }
+}
 </script>
 
 <template>
@@ -44,6 +64,7 @@ async function uploadFile(uploadRequestOptions: UploadRequestOptions) {
     drag
     :show-file-list="false"
     :http-request="uploadFile"
+    @paste="handlePaste"
   >
     <el-icon class="el-icon--upload">
       <UploadFilled />
