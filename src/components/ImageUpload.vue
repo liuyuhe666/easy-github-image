@@ -7,8 +7,6 @@ import { useSettingStore } from '../stores/setting.ts'
 import { getFileExtension } from '../utils'
 
 const settingStore = useSettingStore()
-const token = settingStore.token
-const repo = settingStore.repo
 const imageStore = useImageStore()
 
 async function upload(file: File) {
@@ -18,6 +16,7 @@ async function upload(file: File) {
   const suffix = getFileExtension(file.name)
   const path = `images/${year}/${timestamp}.${suffix}`
   try {
+    const { token, repo } = settingStore
     await uploadImage(file, path, repo, token)
     await imageStore.update(repo, token)
     ElMessage({

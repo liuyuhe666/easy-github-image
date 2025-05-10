@@ -11,8 +11,7 @@ const settingStore = useSettingStore()
 const { copy } = useClipboard()
 
 onMounted(async () => {
-  const repo = settingStore.repo
-  const token = settingStore.token
+  const { token, repo } = settingStore
   if (!repo || !token) {
     ElMessage({
       message: '请先完成 GitHub 配置',
